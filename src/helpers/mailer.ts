@@ -14,10 +14,22 @@ export const sendEmail = async ({email, emailType,userId}:any) => {
 
 
       if (emailType==="VERIFY") {
-          await User.findByIdAndUpdate(userId, {verifyToken: hashedToken,verifyTokenExpiry:Date.now() +3600000}); //ya token ki expiary ban gai   
-      }
+      await User.findByIdAndUpdate(userId, {
+         $set:{ //add set parameter
+           verifyToken: hashedToken,
+           verifyTokenExpiry:Date.now() +3600000}
+         }
+        )}
+           //ya token ki expiary ban gai   
       else if(emailType==="RESET") {
-        await User.findByIdAndUpdate(userId, {forgotPasswordToken: hashedToken,forgotPasswordExpiry:Date.now() +3600000});
+        await User.findByIdAndUpdate(userId, {
+          $set:{
+            forgotPasswordToken: hashedToken,
+            forgotPasswordExpiry: new Date(Date.now() +3600000)
+          }
+        }
+      
+      );
       }
       var transport = nodemailer.createTransport({
         host: "sandbox.smtp.mailtrap.io",
